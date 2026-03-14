@@ -1,0 +1,164 @@
+#include "parse_json.h"
+#include "ast.h"
+
+JSONnode* makeNode(NodeKind kind, Token* token) {
+    JSONnode* node = malloc(sizeof(struct JSONnode_));
+    node->kind = kind;
+    node->token = token;
+    node->next = NULL;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+ParseState state;
+
+Symbol lookahead() {
+    return state.curr == NULL ? TK_EOI:state.curr->symbol;
+}
+
+void init(Token* tkns) {
+    state.tokens = tkns;
+    state.curr = state.tokens;
+}
+
+bool done() {
+    return state.curr == NULL;
+}
+
+void advance() {
+    if (!done())
+        state.curr = state.curr->next;
+}
+
+bool expect(Symbol sym) {
+    return sym == lookahead();
+}
+
+bool match(Symbol sym) {
+    if (expect(sym)) {
+        advance();
+        return true;
+    }
+    printf("Mismatched token: %s\n",tokenStr[lookahead()]);
+    return false;
+}
+
+JSONnode* parseObject() {
+    JSONnode* node = NULL;
+    if (expect(TK_LCURLY)) {
+        node = makeNode(object, state.curr);
+        match(TK_LCURLY);
+        node->left = parseKVPair();
+        JSONnode* tail = node->left;
+        while (!done() && expect(TK_COMMA) && !expect(TK_RCURLY)) {
+            match(TK_COMMA);
+            JSONnode* t = parseKVPair();
+            if (tail == NULL) {
+                node->left = tail = t;
+            } else {
+                tail->next = t;
+                tail = t;
+            }
+        }
+        if (expect(TK_RCURLY)) {
+            match(TK_RCURLY);
+        } else {
+            printf("Error: expected closing \'}\' for object.\n");
+        }
+    }
+    return node;
+}
+
+JSONnode* parseArray() {
+    JSONnode* node = NULL;
+    if (expect(TK_LSQB)) {
+        node = makeNode(array, state.curr);
+        match(TK_LSQB);
+        node->left = parseValue();
+        JSONnode* tail = node->left;
+        while (!done() && expect(TK_COMMA) && !expect(TK_RSQB)) {
+            match(TK_COMMA);
+            JSONnode* t = parseValue();
+            if (tail == NULL) {
+                node->left = tail = t;
+            } else {
+                tail->next = t;
+                tail = t;
+            }
+        }
+        if (expect(TK_RSQB)) {
+            match(TK_RSQB);
+        } else {
+            printf("Error: expected missing ']' to close array.\n");
+        }
+    }
+    return node;
+}
+
+JSONnode* parseKVPair() {
+    JSONnode* kvp = NULL;
+    Token* key;
+    Token* value;
+    if (expect(TK_STRING)) {
+        key = state.curr;
+        match(TK_STRING);
+        if (expect(TK_COLON)) {
+            kvp = makeNode(kvpair, state.curr);
+            kvp->left = makeNode(string, key);
+            match(TK_COLON);
+            kvp->right = parseValue();
+            if (kvp->right == NULL) {
+                printf("Well shit.\n");
+            }
+        } else {
+            printf("Invalid JSON: expected ':'\n");
+        }
+    } else {
+        printf("Invalid JSON: expect string as key\n");
+    }
+    return kvp;
+}
+
+JSONnode* parseValue() {
+    JSONnode* node = NULL;
+    switch (lookahead()) {
+        case TK_LCURLY:
+            node = parseObject();
+            break;
+        case TK_LSQB:
+            node = parseArray();
+            break;
+        case TK_NUM:
+            node = makeNode(number, state.curr);
+            match(TK_NUM);
+            break;
+        case TK_STRING:
+            node = makeNode(string, state.curr);
+            match(TK_STRING);
+            break;
+        case TK_TRUE:
+        case TK_FALSE:
+        case TK_NULL: 
+            node = makeNode(constant, state.curr);
+            match(lookahead());
+            break;
+        default:
+            printf("No match on %s", tokenStr[lookahead()]);
+            break;
+    }
+    return node;
+}
+
+JSONnode* parseElement() {
+    return parseValue();
+}
+JSONnode* parseJson() {
+    return parseElement();
+}
+
+JSONnode* parse(Token* tokens) {
+    init(tokens);
+    JSONnode* node = parseJson();
+    return node;
+}

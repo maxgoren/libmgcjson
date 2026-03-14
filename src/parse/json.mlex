@@ -1,0 +1,11 @@
+{"{", TK_LCURLY}
+{"}", TK_RCURLY}
+{"\[",TK_LSQB}
+{"\]",TK_RSQB}
+{":",TK_COLON}
+{"[,]",TK_COMMA}
+{"true",TK_TRUE}
+{"false",TK_FALSE}
+{"null",TK_NULL}
+{"\"(.+)\"",TK_STRING}
+{"([0-9])+([.]([0-9])+)*",TK_NUM}
