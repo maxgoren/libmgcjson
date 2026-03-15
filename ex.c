@@ -7,7 +7,7 @@
 
 
 int main(int argc, char* argv[]) {
-    char* raw = "{ \"taco\" : \"tuesday\", \"toppings\": [ \"lettuce\", \"onions\", \"salsa\"], \"otra vez\": { \"tortilla\": \"con salsa\" } }";
+    char* raw = "{ \"hello\" : 42, \"red\" : \"rocket\", \"taco\" : \"tuesday\", \"toppings\": [ \"lettuce\", \"onions\", \"salsa\"], \"otra vez\": { \"jimmy\": \"crack corn\" } }";
     JSONnode* ast = toJSON(raw);
     dump(ast);
     printf("%s\n", JSONtoString(ast));

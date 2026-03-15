@@ -13,15 +13,15 @@ typedef enum NodeKind {
     constant
 } NodeKind;
 
-typedef struct JSONnode_ {
+typedef struct JSONnode {
     NodeKind kind;
     Token* token;
-    struct JSONnode_* next;
-    struct JSONnode_* left;
-    struct JSONnode_* right;    
-} JSONnode;
+    struct JSONnode* next;
+    struct JSONnode* left;
+    struct JSONnode* right;    
+} JSON;
 
 
-JSONnode* makeNode(NodeKind kind, Token* token);
+JSON* makeNode(NodeKind kind, Token* token);
 
 #endif

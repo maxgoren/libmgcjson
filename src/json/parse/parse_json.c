@@ -1,8 +1,8 @@
 #include "parse_json.h"
 #include "ast.h"
 
-JSONnode* makeNode(NodeKind kind, Token* token) {
-    JSONnode* node = malloc(sizeof(struct JSONnode_));
+JSON* makeNode(NodeKind kind, Token* token) {
+    JSON* node = malloc(sizeof(struct JSONnode));
     node->kind = kind;
     node->token = token;
     node->next = NULL;
@@ -44,16 +44,16 @@ bool match(Symbol sym) {
     return false;
 }
 
-JSONnode* parseObject() {
-    JSONnode* node = NULL;
+JSON* parseObject() {
+    JSON* node = NULL;
     if (expect(TK_LCURLY)) {
         node = makeNode(object, state.curr);
         match(TK_LCURLY);
         node->left = parseKVPair();
-        JSONnode* tail = node->left;
+        JSON* tail = node->left;
         while (!done() && expect(TK_COMMA) && !expect(TK_RCURLY)) {
             match(TK_COMMA);
-            JSONnode* t = parseKVPair();
+            JSON* t = parseKVPair();
             if (tail == NULL) {
                 node->left = tail = t;
             } else {
@@ -70,16 +70,16 @@ JSONnode* parseObject() {
     return node;
 }
 
-JSONnode* parseArray() {
-    JSONnode* node = NULL;
+JSON* parseArray() {
+    JSON* node = NULL;
     if (expect(TK_LSQB)) {
         node = makeNode(array, state.curr);
         match(TK_LSQB);
         node->left = parseValue();
-        JSONnode* tail = node->left;
+        JSON* tail = node->left;
         while (!done() && expect(TK_COMMA) && !expect(TK_RSQB)) {
             match(TK_COMMA);
-            JSONnode* t = parseValue();
+            JSON* t = parseValue();
             if (tail == NULL) {
                 node->left = tail = t;
             } else {
@@ -96,8 +96,8 @@ JSONnode* parseArray() {
     return node;
 }
 
-JSONnode* parseKVPair() {
-    JSONnode* kvp = NULL;
+JSON* parseKVPair() {
+    JSON* kvp = NULL;
     Token* key;
     Token* value;
     if (expect(TK_STRING)) {
@@ -120,8 +120,8 @@ JSONnode* parseKVPair() {
     return kvp;
 }
 
-JSONnode* parseValue() {
-    JSONnode* node = NULL;
+JSON* parseValue() {
+    JSON* node = NULL;
     switch (lookahead()) {
         case TK_LCURLY:
             node = parseObject();
@@ -150,15 +150,15 @@ JSONnode* parseValue() {
     return node;
 }
 
-JSONnode* parseElement() {
+JSON* parseElement() {
     return parseValue();
 }
-JSONnode* parseJson() {
+JSON* parseJson() {
     return parseElement();
 }
 
-JSONnode* parse(Token* tokens) {
+JSON* parse(Token* tokens) {
     init(tokens);
-    JSONnode* node = parseJson();
+    JSON* node = parseJson();
     return node;
 }

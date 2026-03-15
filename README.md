@@ -10,6 +10,7 @@ to use, include mgc/json/json.h and compile with -lmgcjson after installing on y
 ```
     make
     sudo make install
+    sudo ldconfig
 ```
 
 ## usage
@@ -27,4 +28,8 @@ to use, include mgc/json/json.h and compile with -lmgcjson after installing on y
         printf("_[toppings][1]=%s\n", JSONtoString(element));
         return 0;
     }
+```
+compile with
+```
+    gcc ex.c -o ex -lmgcjson
 ```

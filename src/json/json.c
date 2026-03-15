@@ -1,12 +1,12 @@
 #include "json.h"
-#include "../parse/lex.h"
-#include "../parse/parse_json.h"
+#include "parse/lex.h"
+#include "parse/parse_json.h"
 
-JSONnode* toJSON(char* raw) {
+JSON* toJSON(char* raw) {
     return parse(tokenize_input(raw));
 }
 
-char* JSONtoString(JSONnode* json) {
+char* JSONtoString(JSON* json) {
     if (json != NULL) {
         char* lhs = JSONtoString(json->left);
         char* rhs = JSONtoString(json->right);
@@ -33,7 +33,7 @@ char* JSONtoString(JSONnode* json) {
             } break;
             case array: {
                 sprintf(buff, "[ ");
-                JSONnode* tmp = json->left;
+                JSON* tmp = json->left;
                 while (tmp) {
                     char* element = JSONtoString(tmp);
                     if (tmp->next != NULL) {
@@ -59,15 +59,15 @@ char* JSONtoString(JSONnode* json) {
     return NULL;
 }
 
-JSONnode* getJSONElementByName(JSONnode* ast, char* key) {
+JSON* getJSONElementByName(JSON* ast, char* key) {
     if (ast ==  NULL)
         return NULL;
     if (ast->kind != object) {
         printf("Error: Not A JSON object...\n");
         return NULL;
     }
-    JSONnode* members = ast->left;
-    for (JSONnode* iter = members; iter != NULL; iter = iter->next) {
+    JSON* members = ast->left;
+    for (JSON* iter = members; iter != NULL; iter = iter->next) {
         if (iter->kind == kvpair) {
             char* t = iter->left->token->text+1;
             bool match = true;
@@ -86,16 +86,16 @@ JSONnode* getJSONElementByName(JSONnode* ast, char* key) {
     return NULL;
 }
 
-JSONnode* getJSONArrayElementByIndex(JSONnode* ast, int index) {
+JSON* getJSONArrayElementByIndex(JSON* ast, int index) {
     if (ast ==  NULL)
         return NULL;
     if (ast->kind != array) {
         printf("Error: Not A JSON array...\n");
         return NULL;
     }
-    JSONnode* members = ast->left;
+    JSON* members = ast->left;
     int i = 0;
-    for (JSONnode* iter = members; iter != NULL; iter = iter->next) {
+    for (JSON* iter = members; iter != NULL; iter = iter->next) {
         if (i == index)
             return iter;
         i++;
@@ -109,7 +109,7 @@ JSONnode* getJSONArrayElementByIndex(JSONnode* ast, int index) {
 
 */
 bool in_arr = false;
-void __preorderJSON(JSONnode* ast, int d) {
+void __preorderJSON(JSON* ast, int d) {
     if (ast != NULL) {
         switch (ast->kind) {
             case object: {
@@ -152,12 +152,12 @@ void __preorderJSON(JSONnode* ast, int d) {
     }
 }
 
-void dump(JSONnode* node) {
+void dump(JSON* node) {
     __preorderJSON(node, 1);
     printf("\n");
 }
 
-void free_JSON(JSONnode* node) {
+void free_JSON(JSON* node) {
     if (node != NULL) {
         free_JSON(node->next);
         free_JSON(node->left);

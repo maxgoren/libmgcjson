@@ -23,13 +23,13 @@ bool done();
 void advance();
 bool expect(Symbol sym);
 bool match(Symbol sym);
-JSONnode* parseJson();
-JSONnode* parseElement();
-JSONnode* parseValue();
-JSONnode* parseObject();
-JSONnode* parseArray();
-JSONnode* parseKVPair();
-JSONnode* parseJson();
-JSONnode* parse(Token* tokens);
+JSON* parseJson();
+JSON* parseElement();
+JSON* parseValue();
+JSON* parseObject();
+JSON* parseArray();
+JSON* parseKVPair();
+JSON* parseJson();
+JSON* parse(Token* tokens);
 
 #endif
