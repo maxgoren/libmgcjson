@@ -20,11 +20,11 @@ to use, include mgc/json/json.h and compile with -lmgcjson after installing on y
 
     int main(int argc, char* argv[]) {
         char* raw = "{ \"taco\" : \"tuesday\", \"toppings\": [ \"lettuce\", \"onions\", \"salsa\"], \"otra vez\": { \"tortilla\": \"con salsa\" } }";
-        JSONnode* as_json = toJSON(raw);
+        JSON* as_json = toJSON(raw);
         dump(ast);
         char* as_str = JSONtoString(as_json);
-        JSONnode* member = getJSONElementByName(ast, "toppings");
-        JSONnode* element = getJSONArrayElementByIndex(member, 1);
+        JSON* member = getJSONElementByName(ast, "toppings");
+        JSON* element = getJSONArrayElementByIndex(member, 1);
         printf("_[toppings][1]=%s\n", JSONtoString(element));
         return 0;
     }
