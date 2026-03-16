@@ -22,8 +22,8 @@ Token* next_token(char* input) {
     int match_len = 0;
     bool in_quote = false;
     for (char* p = input; *p; *p++) {
-        state = matrix[state][*p];
-        if (state > 0 && accept[state] > -1) {
+        state = lexmatrix[state][*p];
+        if (state > 0 && lexaccept[state] > -1) {
             last_match = state;
             match_len = (p-input)+1;
         }
@@ -42,7 +42,7 @@ Token* next_token(char* input) {
     if (last_match == 0) {
         return NULL;
     }
-    return makeLexToken(accept[last_match], input, match_len);
+    return makeLexToken(lexaccept[last_match], input, match_len);
 }
 
 
@@ -64,5 +64,5 @@ Token* tokenize_input(char* input) {
 
 void printTokens(Token* head) {
 	for (Token* it = head; it != NULL; it = it->next) 
-		printf("<%s, %s>\n", tokenStr[it->symbol], it->text);
+		printf("<%s, %s>\n", lextokenStr[it->symbol], it->text);
 }

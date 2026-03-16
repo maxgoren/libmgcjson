@@ -1,7 +1,7 @@
 #include "parse_json.h"
 #include "ast.h"
 
-JSON* makeNode(NodeKind kind, Token* token) {
+JSON* make_JSON_AST_Node(NodeKind kind, Token* token) {
     JSON* node = malloc(sizeof(struct JSONnode));
     node->kind = kind;
     node->token = token;
@@ -40,14 +40,14 @@ bool match(Symbol sym) {
         advance();
         return true;
     }
-    printf("Mismatched token: %s\n",tokenStr[lookahead()]);
+    printf("Mismatched token: %s\n",lextokenStr[lookahead()]);
     return false;
 }
 
 JSON* parseObject() {
     JSON* node = NULL;
     if (expect(TK_LCURLY)) {
-        node = makeNode(object, state.curr);
+        node = make_JSON_AST_Node(object, state.curr);
         match(TK_LCURLY);
         node->left = parseKVPair();
         JSON* tail = node->left;
@@ -73,7 +73,7 @@ JSON* parseObject() {
 JSON* parseArray() {
     JSON* node = NULL;
     if (expect(TK_LSQB)) {
-        node = makeNode(array, state.curr);
+        node = make_JSON_AST_Node(array, state.curr);
         match(TK_LSQB);
         node->left = parseValue();
         JSON* tail = node->left;
@@ -104,8 +104,8 @@ JSON* parseKVPair() {
         key = state.curr;
         match(TK_STRING);
         if (expect(TK_COLON)) {
-            kvp = makeNode(kvpair, state.curr);
-            kvp->left = makeNode(string, key);
+            kvp = make_JSON_AST_Node(kvpair, state.curr);
+            kvp->left = make_JSON_AST_Node(string, key);
             match(TK_COLON);
             kvp->right = parseValue();
             if (kvp->right == NULL) {
@@ -130,21 +130,21 @@ JSON* parseValue() {
             node = parseArray();
             break;
         case TK_NUM:
-            node = makeNode(number, state.curr);
+            node = make_JSON_AST_Node(number, state.curr);
             match(TK_NUM);
             break;
         case TK_STRING:
-            node = makeNode(string, state.curr);
+            node = make_JSON_AST_Node(string, state.curr);
             match(TK_STRING);
             break;
         case TK_TRUE:
         case TK_FALSE:
         case TK_NULL: 
-            node = makeNode(constant, state.curr);
+            node = make_JSON_AST_Node(constant, state.curr);
             match(lookahead());
             break;
         default:
-            printf("No match on %s", tokenStr[lookahead()]);
+            printf("No match on %s", lextokenStr[lookahead()]);
             break;
     }
     return node;

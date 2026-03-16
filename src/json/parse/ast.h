@@ -22,6 +22,6 @@ typedef struct JSONnode {
 } JSON;
 
 
-JSON* makeNode(NodeKind kind, Token* token);
+JSON* make_JSON_AST_Node(NodeKind kind, Token* token);
 
 #endif

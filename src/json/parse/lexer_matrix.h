@@ -8,8 +8,8 @@ TK_COMMA,TK_TRUE,TK_FALSE,TK_NULL,TK_STRING,
  TK_EOI
 } TKSymbol;
 
-extern const char* tokenStr[];
-extern const int matrix[27][256]; // Assuming these are arrays/global variables
-extern const int accept[];
+extern const char* lextokenStr[];
+extern const int lexmatrix[27][256]; // Assuming these are arrays/global variables
+extern const int lexaccept[];
 
 #endif
