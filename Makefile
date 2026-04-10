@@ -7,9 +7,9 @@ libjson:
 
 install:
 	mv libmgcjson.so /usr/local/lib
-	mkdir /usr/include/mgc
-	mkdir /usr/include/mgc/json
-	mkdir /usr/include/mgc/json/parse
+	#mkdir /usr/include/mgc
+	#mkdir /usr/include/mgc/json
+	#mkdir /usr/include/mgc/json/parse
 	cp src/json/json.h /usr/include/mgc/json/json.h
 	cp src/json/parse/lexer_matrix.h /usr/include/mgc/json/parse/lexer_matrix.h
 	cp src/json/parse/ast.h /usr/include/mgc/json/parse/ast.h

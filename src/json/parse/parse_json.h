@@ -24,12 +24,10 @@ void advance();
 bool expect(Symbol sym);
 bool match(Symbol sym);
 JSON* parseJson();
-JSON* parseElement();
 JSON* parseValue();
 JSON* parseObject();
 JSON* parseArray();
 JSON* parseKVPair();
-JSON* parseJson();
 JSON* parse(Token* tokens);
 
 #endif

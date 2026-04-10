@@ -23,7 +23,9 @@ void init(Token* tkns) {
 }
 
 bool done() {
-    return state.curr == NULL;
+    if (state.curr == NULL)
+        return true;
+    return state.curr->symbol == TK_EOI;
 }
 
 void advance() {
@@ -41,6 +43,7 @@ bool match(Symbol sym) {
         return true;
     }
     printf("Mismatched token: %s\n",lextokenStr[lookahead()]);
+    advance();
     return false;
 }
 
@@ -49,16 +52,18 @@ JSON* parseObject() {
     if (expect(TK_LCURLY)) {
         node = make_JSON_AST_Node(object, state.curr);
         match(TK_LCURLY);
-        node->left = parseKVPair();
-        JSON* tail = node->left;
-        while (!done() && expect(TK_COMMA) && !expect(TK_RCURLY)) {
-            match(TK_COMMA);
-            JSON* t = parseKVPair();
-            if (tail == NULL) {
-                node->left = tail = t;
-            } else {
-                tail->next = t;
-                tail = t;
+        if (!expect(TK_RCURLY)) {
+            node->left = parseKVPair();
+            JSON* tail = node->left;
+            while (!done() && expect(TK_COMMA)) {
+                match(TK_COMMA);
+                JSON* t = parseKVPair();
+                if (tail == NULL) {
+                    node->left = tail = t;
+                } else {
+                    tail->next = t;
+                    tail = t;
+                }
             }
         }
         if (expect(TK_RCURLY)) {
@@ -75,16 +80,18 @@ JSON* parseArray() {
     if (expect(TK_LSQB)) {
         node = make_JSON_AST_Node(array, state.curr);
         match(TK_LSQB);
-        node->left = parseValue();
-        JSON* tail = node->left;
-        while (!done() && expect(TK_COMMA) && !expect(TK_RSQB)) {
-            match(TK_COMMA);
-            JSON* t = parseValue();
-            if (tail == NULL) {
-                node->left = tail = t;
-            } else {
-                tail->next = t;
-                tail = t;
+        if (!expect(TK_RSQB)) {
+            node->left = parseValue();
+            JSON* tail = node->left;
+            while (!done() && expect(TK_COMMA)) {
+                match(TK_COMMA);
+                JSON* t = parseValue();
+                if (tail == NULL) {
+                    node->left = tail = t;
+                } else {
+                    tail->next = t;
+                    tail = t;
+                }
             }
         }
         if (expect(TK_RSQB)) {
@@ -109,7 +116,7 @@ JSON* parseKVPair() {
             match(TK_COLON);
             kvp->right = parseValue();
             if (kvp->right == NULL) {
-                printf("Well shit.\n");
+                printf("Error: Key/Value pair is missing it's value!.\n");
             }
         } else {
             printf("Invalid JSON: expected ':'\n");
@@ -150,11 +157,8 @@ JSON* parseValue() {
     return node;
 }
 
-JSON* parseElement() {
-    return parseValue();
-}
 JSON* parseJson() {
-    return parseElement();
+    return parseValue();
 }
 
 JSON* parse(Token* tokens) {

@@ -33,18 +33,20 @@ char* JSONtoString(JSON* json) {
             } break;
             case array: {
                 sprintf(buff, "[ ");
-                JSON* tmp = json->left;
-                while (tmp) {
-                    char* element = JSONtoString(tmp);
-                    if (tmp->next != NULL) {
-                        sprintf(buff, "%s%s, ", buff, element);
-                    } else {
-                        sprintf(buff, "%s%s", buff, element);
+                if (json->left) {
+                    JSON* tmp = json->left;
+                    while (tmp) {
+                        char* element = JSONtoString(tmp);
+                        if (tmp->next != NULL) {
+                            sprintf(buff, "%s%s, ", buff, element);
+                        } else {
+                            sprintf(buff, "%s%s", buff, element);
+                        }
+                        if (element != NULL) free(element);
+                        tmp = tmp->next;
                     }
-                    if (element != NULL) free(element);
-                    tmp = tmp->next;
                 }
-                sprintf(buff, "]");
+                sprintf(buff, "%s ]", buff);
             } break;
             case number:
             case string:
