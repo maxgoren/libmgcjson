@@ -8,11 +8,11 @@
 /* convert string to JSON */
 JSON* toJSON(char* raw);
 
-/* convert string to JSON */
+/* convert JSON to string */
 char* JSONtoString(JSON* json);
 
 /* pretty print JSON object */
-void dump(JSON* ast);
+void printJSON(JSON* ast);
 
 /* retrieve an object member by key */
 JSON* getJSONElementByName(JSON* ast, char* key);

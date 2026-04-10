@@ -52,7 +52,7 @@ char* JSONtoString(JSON* json) {
                 sprintf(buff, "%s", json->token->text);
             }break;
             default:
-                printf("the fuck... %d\n", json->kind);
+                printf("Parse Error: %d:%s\n", json->kind, json->token->text);
         }
         return buff;
     }
@@ -105,7 +105,7 @@ JSON* getJSONArrayElementByIndex(JSON* ast, int index) {
 
 /*
 
-    For pretty printing JSON, called by dump();
+    For pretty printing JSON, called by printJSON();
 
 */
 bool in_arr = false;
@@ -152,7 +152,7 @@ void __preorderJSON(JSON* ast, int d) {
     }
 }
 
-void dump(JSON* node) {
+void printJSON(JSON* node) {
     __preorderJSON(node, 1);
     printf("\n");
 }

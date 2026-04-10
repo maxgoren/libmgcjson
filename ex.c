@@ -9,18 +9,18 @@
 int main(int argc, char* argv[]) {
     char* raw = "{ \"hello\" : 42, \"red\" : \"rocket\", \"taco\" : \"tuesday\", \"toppings\": [ \"lettuce\", \"onions\", \"salsa\"], \"otra vez\": { \"jimmy\": \"crack corn\" } }";
     JSON* ast = toJSON(raw);
-    dump(ast);
+    printJSON(ast);
     printf("%s\n", JSONtoString(ast));
     printf("_[taco]=%s\n", getJSONElementByName(ast, "taco")->token->text);
     printf("_[otra vez]=");
-    dump(getJSONElementByName(ast, "otra vez"));
+    printJSON(getJSONElementByName(ast, "otra vez"));
     printf("_[otra vez][jimmy]=%s\n", getJSONElementByName(getJSONElementByName(ast, "otra vez"), "jimmy")->token->text);
     JSON* res = getJSONElementByName(ast, "toppings");
     if (res->kind == array)
         printf("_[toppings][1]=%s\n", getJSONArrayElementByIndex(res, 1)->token->text);
     else {
         printf("Wanted %d, got %d: ", array, res->kind);
-        dump(res);
+        printJSON(res);
     }
     return 0;
 }
